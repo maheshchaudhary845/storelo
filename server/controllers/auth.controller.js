@@ -15,6 +15,14 @@ const generateToken = (id)=>{
 export const register = async (req, res)=>{
     try{
         const {name, email, password} = req.body;
+        
+        const userExist = await User.findOne({email});
+        if(userExist){
+            return res.status(409).json({
+                message: "User already exists"
+            })
+        }
+
         const encryptPassword = await bcrypt.hash(password, 10);
 
         const user = await User.create({
