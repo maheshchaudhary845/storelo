@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
     const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -16,13 +16,12 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (form.name.length < 2) return setError("Name must be at least 2 characters");
+        if (!form.email) return setError("Email is required");
+        if (form.password.length < 8) return setError("Password must be at least 8 characters");
+        if (!matchPassword) return setError("Passwords do not match");
         try {
             setLoading(true);
-
-            if(!form.name.length > 2 || !form.email || form.password.length <= 8 || !matchPassword){
-                setError("Error in form validation");
-                return;
-            }
 
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
                 method: "POST",
@@ -45,16 +44,16 @@ function Register() {
         }
     }
 
-    const handlePassword = (e)=>{
+    const handlePassword = (e) => {
         const currPass = form.password;
         const confPass = e.target.value;
 
         setConfirmPassword(confPass);
 
-        if(confPass.length >= 8){
-            if(currPass === confPass){
+        if (confPass.length >= 8) {
+            if (currPass === confPass) {
                 setMatchPassword(true);
-            }else{
+            } else {
                 setMatchPassword(false);
             }
         }
