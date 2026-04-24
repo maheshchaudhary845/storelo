@@ -14,6 +14,8 @@ import AdminProducts from './pages/admin/AdminProducts'
 import AdminNewProduct from './pages/admin/AdminNewProduct'
 import AdminEditProduct from './pages/admin/AdminEditProduct'
 import AdminOrders from './pages/admin/AdminOrders'
+import { ProtectedRoute } from './components/common/ProtectedRoute'
+import { AdminRoute } from './components/common/AdminRoute'
 
 function App() {
 
@@ -29,16 +31,16 @@ function App() {
         <Route path='/register' element={<Register />} />
 
         {/* User pages (protected) */}
-        <Route path='/checkout' element={<Checkout />} />
-        <Route path='/orders' element={<MyOrders />} />
-        <Route path='/orders/:id' element={<OrderDetail />} />
+        <Route path='/checkout' element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path='/orders' element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+        <Route path='/orders/:id' element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
 
         {/* Admin pages (protected) */}
-        <Route path='/admin' element={<AdminDashboard />} />
-        <Route path='/admin/products' element={<AdminProducts />} />
-        <Route path='/admin/products/new' element={<AdminNewProduct />} />
-        <Route path='/admin/products/:slug/edit' element={<AdminEditProduct />} />
-        <Route path='/admin/orders' element={<AdminOrders />} />
+        <Route path='/admin' element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path='/admin/products' element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path='/admin/products/new' element={<AdminRoute><AdminNewProduct /></AdminRoute>} />
+        <Route path='/admin/products/:slug/edit' element={<AdminRoute><AdminEditProduct /></AdminRoute>} />
+        <Route path='/admin/orders' element={<AdminRoute><AdminOrders /></AdminRoute>} />
 
       </Routes>
     </>
