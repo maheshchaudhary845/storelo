@@ -16,11 +16,16 @@ import AdminEditProduct from './pages/admin/AdminEditProduct'
 import AdminOrders from './pages/admin/AdminOrders'
 import { ProtectedRoute } from './components/common/ProtectedRoute'
 import { AdminRoute } from './components/common/AdminRoute'
+import Navbar from './components/common/Navbar'
+import { useLocation } from 'react-router-dom'
 
 function App() {
+  const location = useLocation();
+  const hideNavbar = ['/login', '/register'].includes(location.pathname) || location.pathname.startsWith('/admin');
 
   return (
     <>
+      {!hideNavbar && <Navbar />}
       <Routes>
         {/* Public pages */}
         <Route path='/' element={<Home />} />
