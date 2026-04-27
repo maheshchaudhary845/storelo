@@ -1,9 +1,12 @@
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 function Navbar() {
     const { user, logout } = useAuth();
+    const {totalQuantity} = useCart();
+
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -25,7 +28,7 @@ function Navbar() {
                         <>
                             <button onClick={() => navigate("/login")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer">Login</button>
                             <button onClick={() => navigate("/register")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer">Register</button>
-                            <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent">Cart</button>
+                            <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent">Cart{totalQuantity ? `(${totalQuantity})` : ''}</button>
                         </>
                         :
                         user.role === "admin" ?
@@ -35,7 +38,7 @@ function Navbar() {
                             </>
                             :
                             <>
-                                <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent">Cart</button>
+                                <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent">Cart{totalQuantity ? `(${totalQuantity})` : ''}</button>
                                 <button onClick={() => navigate("/orders")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer">My Orders</button>
                                 <button onClick={handleLogout} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer text-danger">Logout</button>
                             </>
