@@ -28,7 +28,7 @@ function Navbar() {
                         <>
                             <button onClick={() => navigate("/login")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer">Login</button>
                             <button onClick={() => navigate("/register")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer">Register</button>
-                            <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent relative"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none" stroke="#F0F0FF" stroke-width="1.5" stroke-linecap="round">
+                            <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent relative"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none" stroke="#F0F0FF" strokeWidth="1.5" strokeLinecap="round">
                                 <path d="M8 16L16.7201 15.2733C19.4486 15.046 20.0611 14.45 20.3635 11.7289L21 6" />
                                 <path d="M6 6H22" />
                                 <circle cx="6" cy="20" r="2" />
@@ -45,7 +45,7 @@ function Navbar() {
                             </>
                             :
                             <>
-                                <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent relative"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none" stroke="#F0F0FF" stroke-width="1.5" stroke-linecap="round">
+                                <button onClick={() => navigate("/cart")} className="py-1.75 px-4 border rounded-lg border-border cursor-pointer bg-accent relative"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" color="#ffffff" fill="none" stroke="#F0F0FF" strokeWidth="1.5" strokeLinecap="round">
                                     <path d="M8 16L16.7201 15.2733C19.4486 15.046 20.0611 14.45 20.3635 11.7289L21 6" />
                                     <path d="M6 6H22" />
                                     <circle cx="6" cy="20" r="2" />
