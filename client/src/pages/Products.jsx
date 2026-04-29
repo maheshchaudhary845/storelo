@@ -7,6 +7,7 @@ function Products() {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [sortBy, setSortBy] = useState("popular");
+    const [maxPrice, setMaxPrice] = useState(10000);
 
     useEffect(() => {
         async function fetchProducts() {
@@ -30,10 +31,11 @@ function Products() {
     const filtered = products
         .filter(product => selectedCategory === "All" || product.category === selectedCategory)
         .filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()))
-        .sort((a, b)=>{
-            if(sortBy === "price-low") return a.price - b.price;
-            if(sortBy === "price-high") return b.price - a.price;
-            if(sortBy === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
+        .filter(product => product.price <= maxPrice)
+        .sort((a, b) => {
+            if (sortBy === "price-low") return a.price - b.price;
+            if (sortBy === "price-high") return b.price - a.price;
+            if (sortBy === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
             return 0;
         })
 
@@ -51,10 +53,16 @@ function Products() {
                         </div>
                         <div>
                             <div className="text-[11px] font-mono text-muted mb-2.5 tracking-wider">PRICE RANGE</div>
-                            <input type="range" className="w-full accent-accent" />
+                            <input type="range"
+                                min={0}
+                                max={10000}
+                                step={500}
+                                value={maxPrice}
+                                onChange={(e)=> setMaxPrice(Number(e.target.value))}
+                                className="w-full accent-accent" />
                             <div className="flex justify-between items-center text-[11px] text-muted">
                                 <span>₹0</span>
-                                <span>₹10,000</span>
+                                <span>₹{maxPrice.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -62,7 +70,7 @@ function Products() {
                 <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-[13px] text-muted">Showing {filtered.length} products</span>
-                        <select className="py-1.5 px-3 text-[13px] bg-card rounded-lg border border-border text-muted" name="sort" id="sort" value={sortBy} onChange={(e)=> setSortBy(e.target.value)}>
+                        <select className="py-1.5 px-3 text-[13px] bg-card rounded-lg border border-border text-muted" name="sort" id="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                             <option value="popular">Sort: Popular</option>
                             <option value="newest">Sort: Newest First</option>
                             <option value="price-low">Price: Low to High</option>
