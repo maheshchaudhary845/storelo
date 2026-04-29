@@ -22,7 +22,7 @@ function ProductCard({ product }) {
                 <p className="text-muted font-mono text-[11px] uppercase tracking-widest mb-1">{product.category}</p>
                 <h3 className="text-[15px] font-bold line-clamp-2 mb-2">{product.name}</h3>
                 <div className="flex justify-between items-center">
-                    <span className="text-accent text-lg font-extrabold">₹{product.price}</span>
+                    <span className="text-accent text-lg font-extrabold">₹{product.price.toLocaleString()}</span>
                     {cartItem
                         ?
                         <div className="flex justify-between items-center gap-2">
