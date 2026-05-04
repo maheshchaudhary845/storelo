@@ -13,7 +13,7 @@ export const createRazorpayOrder = async (req, res) => {
         });
 
         const order = await razorpay.orders.create({
-            amount: totalPrice * 100,
+            amount: Math.round(Number(totalPrice) * 100),
             currency: "INR",
             receipt: `receipt_${Date.now()}`
         })
@@ -51,9 +51,17 @@ export const verifyPayment = async (req, res) => {
             })
         }
 
+        const orderItems = cartItems.map(item =>({
+            product: item.product._id,
+            name: item.product.name,
+            price: item.product.price,
+            quantity: item.quantity,
+            image: item.product.images?.[0] || "no-image"
+        }))
+
         const order = await Order.create({
             user: req.user._id,
-            orderItems: cartItems,
+            orderItems,
             shippingAddress,
             paymentStatus: "paid",
             paymentId: razorpay_payment_id,
