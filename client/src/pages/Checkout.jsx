@@ -1,18 +1,82 @@
 import { useState } from "react";
-import {useCart} from "../context/CartContext.jsx";
+import { useCart } from "../context/CartContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function Checkout() {
     const [paymentMode, setPaymentMode] = useState("");
-    const [form, setForm] = useState({address: "", city: "", state: "", pincode: ""})
+    const [form, setForm] = useState({ address: "", city: "", state: "", pincode: "" });
+    const [error, setError] = useState("");
 
-    const {cartItems, totalPrice} = useCart();
+    const navigate = useNavigate();
 
-    const handleForm = (e)=>{
-        setForm({...form, [e.target.name]: e.target.value});
+    const { cartItems, totalPrice } = useCart();
+    const { token } = useAuth();
+
+    const handleForm = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
     }
 
-    const handlePayment = ()=>{
-        if(!form.address.trim() || !form.city.trim() || !form.state.trim() || !form.pincode.trim()) return;
+    const handlePayment = async () => {
+        if (!form.address.trim() || !form.city.trim() || !form.state.trim() || !form.pincode.trim()) return setError("Complete address fields");
+        if (!paymentMode.trim()) return setError("Payment mode must be selected!");
+
+        if (paymentMode === "online") {
+            console.log("Entered payment mode as online")
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ totalPrice })
+                })
+                const { success, data, message } = await res.json();
+
+                if (success) {
+                    const options = {
+                        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                        amount: totalPrice * 100,
+                        currency: "INR",
+                        order_id: data.id,
+                        handler: async (response) => {
+                            const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+
+                            const verifyRes = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/verify`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                },
+                                body: JSON.stringify({
+                                    razorpay_order_id,
+                                    razorpay_payment_id,
+                                    razorpay_signature,
+                                    shippingAddress: form,
+                                    cartItems
+                                })
+                            })
+                            const { success: verifySuccess, data: orderData, message: verifyMessage } = await verifyRes.json();
+
+                            if (verifySuccess) {
+                                setError("");
+                                navigate('/orders');
+                            }
+                        }
+                    }
+
+                    const rzp = new window.Razorpay(options);
+                    rzp.open();
+
+                    setError("");
+                }
+            }
+            catch (err) {
+                setError(err.message);
+                console.error(err.message);
+            }
+        }
     }
 
     return (
@@ -47,14 +111,14 @@ function Checkout() {
                         <h4 className="text-sm mb-4">Payment method</h4>
                         <div>
                             <label htmlFor="online" className="flex items-center p-3 gap-2 border border-border rounded-lg cursor-pointer mb-2">
-                                <input type="radio" value="online" onChange={(e)=>setPaymentMode(e.target.value)} name="pay-method" id="online" checked={paymentMode === "online"} />
+                                <input type="radio" value="online" onChange={(e) => setPaymentMode(e.target.value)} name="pay-method" id="online" checked={paymentMode === "online"} />
                                 <div>
                                     <div className={`${paymentMode === "online" ? "text-accent" : "text-text"} text-sm`}>Razorpay</div>
                                     <p className="text-muted text-xs">UPI, Cards, Net Banking, Wallets</p>
                                 </div>
                             </label>
                             <label htmlFor="cod" className="flex items-center p-3 gap-2 border border-border rounded-lg cursor-pointer">
-                                <input type="radio" value="cod" onChange={(e)=>setPaymentMode(e.target.value)} name="pay-method" id="cod" checked={paymentMode === "cod"} />
+                                <input type="radio" value="cod" onChange={(e) => setPaymentMode(e.target.value)} name="pay-method" id="cod" checked={paymentMode === "cod"} />
                                 <div>
                                     <div className={`${paymentMode === "cod" ? "text-accent" : "text-text"} text-sm`}>Cash on Delivery</div>
                                     <p className="text-muted text-xs">Pay when your order arrives</p>
@@ -69,14 +133,14 @@ function Checkout() {
                     <div className="bg-card p-5 rounded-xl border border-border">
                         <h4 className="text-sm mb-4">Order summary</h4>
                         <div className="flex flex-col gap-2">
-                            {cartItems.map(item=>(
+                            {cartItems.map(item => (
                                 <div key={item.product._id} className="flex gap-3 items-center">
                                     <div className="img-cont w-12 h-12 rounded-lg overflow-hidden">
                                         {item.product.images.length ?
-                                        <img src={item.product.images[0]} className="w-full h-full object-cover" alt="product image" />
-                                        :
-                                        <span className="text-4xl flex justify-center items-center h-full">🎧</span>
-                                    }
+                                            <img src={item.product.images[0]} className="w-full h-full object-cover" alt="product image" />
+                                            :
+                                            <span className="text-4xl flex justify-center items-center h-full">🎧</span>
+                                        }
                                     </div>
                                     <div className="flex-1 flex flex-col">
                                         <h5 className="text-sm truncate" title={item.product.name}>{item.product.name}</h5>
@@ -101,6 +165,7 @@ function Checkout() {
                                 <span className="text-accent font-semibold mt-1">₹{totalPrice.toLocaleString()}</span>
                             </div>
                             <button onClick={handlePayment} className="w-full bg-accent py-2 px-3 rounded-lg cursor-pointer text-[15px]">Pay now <span className="font-semibold">₹{totalPrice.toLocaleString()}</span></button>
+                            {error && <p className="text-danger text-[11px] text-center font-mono">{error}</p>}
                         </div>
                     </div>
                 </div>
