@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema(
                 },
                 image: {
                     type: String,
-                    required: true
+                    required: false
                 }
             }
         ],
@@ -57,7 +57,10 @@ const orderSchema = new mongoose.Schema(
             enum: ["pending", "paid", "failed"],
             default: "pending"
         },
-        paymentId: String,
+        paymentId: {
+            type: String,
+            required: true
+        },
         totalPrice: {
             type: Number,
             required: true
