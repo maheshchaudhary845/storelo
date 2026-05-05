@@ -10,7 +10,7 @@ function Checkout() {
 
     const navigate = useNavigate();
 
-    const { cartItems, totalPrice } = useCart();
+    const { cartItems, totalPrice, clearCart } = useCart();
     const { token } = useAuth();
 
     const handleForm = (e) => {
@@ -22,7 +22,6 @@ function Checkout() {
         if (!paymentMode.trim()) return setError("Payment mode must be selected!");
 
         if (paymentMode === "online") {
-            console.log("Entered payment mode as online")
             try {
                 const res = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, {
                     method: "POST",
@@ -62,6 +61,7 @@ function Checkout() {
                             if (verifySuccess) {
                                 setError("");
                                 navigate('/orders');
+                                clearCart();
                             }
                         }
                     }
