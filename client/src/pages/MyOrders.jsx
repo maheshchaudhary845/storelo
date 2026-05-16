@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function MyOrders() {
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const { token } = useAuth();
@@ -11,12 +12,13 @@ function MyOrders() {
     const orderStatus = {
         delivered: "bg-success/15 text-success",
         shipped: "bg-warning/15 text-warning",
-        processing: "bg-blue-100 text-blue-800",
+        processing: "bg-accent-soft text-accent",
         cancelled: "bg-danger/15 text-danger"
     }
 
     useEffect(() => {
         async function fetchOrders() {
+            setLoading(true);
             try {
                 const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/my`, {
                     method: "GET",
@@ -30,12 +32,14 @@ function MyOrders() {
                 }
             } catch (err) {
                 console.error(err.message);
+            } finally{
+                setLoading(false);
             }
         }
         fetchOrders();
     }, [])
 
-    console.log(orders)
+    if(loading) return <p className="text-center text-muted text-sm">Loading...</p>
 
     return (
         <>
