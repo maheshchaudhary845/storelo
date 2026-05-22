@@ -31,11 +31,11 @@ function OrderDetail() {
             }
         }
         fetchOrder();
-    }, [])
+    }, [id])
 
-    useEffect(()=>{
-        orderTimeline.map(status =>{
-            if(order.orderStatus === status.status.toLowerCase()){
+    useEffect(() => {
+        orderTimeline.map(status => {
+            if (order.orderStatus === status.status.toLowerCase()) {
                 setTimelineId(status.id)
             }
         })
@@ -63,7 +63,9 @@ function OrderDetail() {
         }
     ]
 
-    console.log(order, timelineId)
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+    if (loading) return <p className="text-center text-muted">Loading...</p>
 
     return (
         <>
@@ -130,11 +132,11 @@ function OrderDetail() {
                                 </div>
                             </div>
 
-                            {orderTimeline.map((status, i) => (
+                            {order.orderStatus !== "cancelled" ? orderTimeline.map((status, i) => (
                                 <div key={status.id} className="flex gap-4">
                                     <div className="flex flex-col gap-1 items-center">
                                         <div className={`circle w-6 h-6 rounded-full ${status.id <= timelineId ? "bg-accent" : "bg-[#282835]"}`}></div>
-                                        {orderTimeline.length-1 !== i ? <div className="pipe w-1 h-10 bg-[#282835]"></div> : ""}
+                                        {orderTimeline.length - 1 !== i ? <div className="pipe w-1 h-10 bg-[#282835]"></div> : ""}
                                     </div>
                                     <div className="flex flex-col gap-1">
                                         <div className="text-sm font-semibold">{status.status}</div>
@@ -147,14 +149,64 @@ function OrderDetail() {
                                         })
                                             .replace("am", "AM")
                                             .replace("pm", "PM")
-                                        : "Pending"}</p>
+                                            : "Pending"}</p>
                                     </div>
                                 </div>
-                            ))}
+                            ))
+                                :
+                                <div className="flex gap-4">
+                                    <div className="circle w-6 h-6 rounded-full bg-danger"></div>
+                                    <p className="text-danger text-sm">This order was cancelled.</p>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
-                <div className="right flex-1"></div>
+                <div className="right flex-1">
+                    <div className="bg-card p-4 rounded-2xl border border-border">
+                        <div className="text-sm font-bold mb-2">Price Summary</div>
+                        <div className="flex justify-between text-[13px] mb-1">
+                            <span className="text-muted">Subtotal</span>
+                            <span className="">₹{order.totalPrice.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-[13px] mb-1">
+                            <span className="text-muted">Shipping</span>
+                            <span className="text-success">Free</span>
+                        </div>
+                        <div className="flex justify-between text-[13px] border-border border-b pb-2">
+                            <span className="text-muted">Payment</span>
+                            <span className="text-muted text-xs font-mono">Razorpay</span>
+                        </div>
+                        <div className="flex justify-between mt-3 font-black">
+                            <span className="">Total</span>
+                            <span className="text-accent">₹{order.totalPrice.toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-card p-4 rounded-2xl border border-border mt-4">
+                        <div className="text-sm font-bold mb-2">Shipping Address</div>
+                        <div className="text-[13px] font-light">{order.shippingAddress?.address}</div>
+                        <div className="text-[13px] font-light text-muted">
+                            <span>{order.shippingAddress?.city}</span>
+                            {", "}
+                            <span>{order.shippingAddress?.state}</span>
+                            {", "}
+                            <span>{order.shippingAddress?.pincode}</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-card p-4 rounded-2xl border border-border mt-4">
+                        <div className="text-sm font-bold mb-2">Payment Info</div>
+                        <div className="flex justify-between text-[13px] mb-1">
+                            <span className="text-muted">Status</span>
+                            <span className="text-success">{capitalize(order.paymentStatus)}</span>
+                        </div>
+                        <div className="flex justify-between text-[13px]">
+                            <span className="text-muted">Payment ID</span>
+                            <span className="text-muted text-xs font-mono">{order.paymentId}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )
