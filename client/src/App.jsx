@@ -18,6 +18,7 @@ import { ProtectedRoute } from './components/common/ProtectedRoute'
 import { AdminRoute } from './components/common/AdminRoute'
 import Navbar from './components/common/Navbar'
 import { useLocation } from 'react-router-dom'
+import About from './pages/About'
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ function App() {
         <Route path='/cart' element={<Cart />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/about' element={<About />} />
 
         {/* User pages (protected) */}
         <Route path='/checkout' element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
