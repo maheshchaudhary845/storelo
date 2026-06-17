@@ -58,7 +58,7 @@ function ProductDetail() {
                             <span className="px-3 font-bold">{quantity}</span>
                             <button onClick={()=> setQuantity(prev => prev + 1)} className="bg-transparent py-3 px-4 text-lg cursor-pointer">+</button>
                         </div>
-                        <button onClick={()=> addToCart(product, cartItem ? cartItem.quantity + quantity : quantity)} className="bg-accent flex-1 rounded-xl cursor-pointer text-[15px] font-bold py-3 px-6 hover:bg-accent-hover">Add to Cart</button>
+                        <button onClick={()=> addToCart(product, quantity)} className="bg-accent flex-1 rounded-xl cursor-pointer text-[15px] font-bold py-3 px-6 hover:bg-accent-hover">Add to Cart</button>
                     </div>
                     <button onClick={()=> navigate('/checkout')} className="w-full bg-surface border border-border cursor-pointer hover:bg-accent transition-colors duration-200 py-3 px-6 rounded-xl font-bold">Buy Now</button>
                     <div className="mt-5 flex gap-2">
